@@ -36,19 +36,19 @@ $(document).ready(function () {
     wow.init();
 
     // ---------- fixed nav -----------
-    const navbar = $('.navbar');
+    // const navbar = $('.navbar');
 
-    lenis.on('scroll', function (e) {
-        const scrollTop = e.scroll;
+    // lenis.on('scroll', function (e) {
+    //     const scrollTop = e.scroll;
 
-        if (scrollTop > 400) {
-            navbar.addClass('nav-scroll');
-            navbar.removeClass('navbar-dark');
-        } else {
-            navbar.removeClass('nav-scroll');
-            navbar.addClass('navbar-dark');
-        }
-    });
+    //     if (scrollTop > 400) {
+    //         navbar.addClass('nav-scroll');
+    //         navbar.removeClass('navbar-dark');
+    //     } else {
+    //         navbar.removeClass('nav-scroll');
+    //         navbar.addClass('navbar-dark');
+    //     }
+    // });
 
     // ---------- to top -----------
     $(".to-top, .progress-wrap").off("click").on("click", function () {
@@ -206,6 +206,23 @@ $(document).ready(function () {
             delay: 1,
         },
         loop: true,
+        breakpoints: {
+            0: {
+                slidesPerView: 1,
+            },
+            480: {
+                slidesPerView: 1,
+            },
+            787: {
+                slidesPerView: 1,
+            },
+            991: {
+                slidesPerView: 3,
+            },
+            1200: {
+                slidesPerView: 3,
+            },
+        },
     });
 
     // ------------ header marq slider -----------
@@ -235,28 +252,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Run only if window width > 991px
 if (window.innerWidth > 991) {
-    $(function () {
-
-        // gs image parallax
-        const parallaxImages = document.querySelectorAll(".gs-img-parallax");
-        parallaxImages.forEach((container) => {
-            const img = container.querySelector("img");
-            container.style.overflow = "hidden";
-            // effect Parallax + Zoom
-            gsap.to(img, {
-                yPercent: -20,
-                scale: 1.2,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: container,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: 1,
-                    // pin: true,
-                },
-            });
-        });
-    });
 
     // ----------- pin cards ----------
     const items = gsap.utils.toArray(".pin-card");
@@ -418,295 +413,6 @@ window.addEventListener("load", () => {
     });
 });
 
-
-// -------- Enhanced Parallax img mouse move -------
-if ($(window).width() > 991) {
-    $(function () {
-        var parallaxContainers = document.getElementsByClassName(
-            "parallaxed-container",
-        );
-
-        for (var j = 0; j < parallaxContainers.length; j++) {
-            var container = parallaxContainers[j];
-
-            container.addEventListener("mouseenter", function (event) {
-                this.addEventListener("mousemove", parallaxed);
-            });
-
-            container.addEventListener("mouseleave", function (event) {
-                this.removeEventListener("mousemove", parallaxed);
-                // Reset transforms when mouse leaves
-                var parallaxElements = this.getElementsByClassName("parallaxed");
-                for (var i = 0; i < parallaxElements.length; i++) {
-                    parallaxElements[i].style.transform = "translate(0px, 0px) scale(1)";
-                }
-            });
-        }
-
-        function parallaxed(e) {
-            var container = this;
-            var containerRect = container.getBoundingClientRect();
-            var mouseX = e.clientX - containerRect.left;
-            var mouseY = e.clientY - containerRect.top;
-            var containerWidth = containerRect.width;
-            var containerHeight = containerRect.height;
-
-            // Calculate normalized mouse position (-1 to 1)
-            var normalizedX = (mouseX / containerWidth) * 2 - 1;
-            var normalizedY = (mouseY / containerHeight) * 2 - 1;
-
-            var parallaxElements = container.getElementsByClassName("parallaxed");
-
-            for (var i = 0; i < parallaxElements.length; i++) {
-                var element = parallaxElements[i];
-                var elementRect = element.getBoundingClientRect();
-                var elementCenterX =
-                    elementRect.left + elementRect.width / 2 - containerRect.left;
-                var elementCenterY =
-                    elementRect.top + elementRect.height / 2 - containerRect.top;
-
-                // Calculate distance from mouse to element center
-                var distanceX = (mouseX - elementCenterX) / containerWidth;
-                var distanceY = (mouseY - elementCenterY) / containerHeight;
-
-                // Different movement intensity based on element index
-                var intensity = 0.4 + i * 0.15; // Increased intensity
-
-                // Movement calculations - increased values
-                var amountMovedX = distanceX * intensity * 50;
-                var amountMovedY = distanceY * intensity * 50;
-
-                // Enhanced scale based on mouse proximity
-                var scale = 1 + (Math.abs(distanceX) + Math.abs(distanceY)) * 0.05;
-
-                // Combine transformations
-                element.style.transform = `
-                        translate(${amountMovedX}px, ${amountMovedY}px) 
-                        scale(${scale})
-                    `;
-            }
-        }
-    });
-}
-
-// ---------- AI Chat Animation ----------
-$(document).ready(function () {
-    const clientText = document.getElementById("clientText");
-    const aiText = document.getElementById("aiText");
-    const clientBubble = document.getElementById("clientBubble");
-    const aiBubble = document.getElementById("aiBubble");
-
-    if (!clientText || !aiText) return;
-
-    const stepsElements = document.querySelectorAll("#conversation-steps .step");
-    if (stepsElements.length === 0) return;
-
-    const conversation = Array.from(stepsElements).map(el => {
-        const side = el.dataset.side;
-        return {
-            side: side,
-            text: el.textContent.trim(),
-            container: side === "client" ? clientBubble : aiBubble,
-            element: side === "client" ? clientText : aiText,
-        };
-    });
-
-    let currentStep = 0;
-
-    async function typeEffect(element, text) {
-        element.textContent = "";
-        for (let i = 0; i < text.length; i++) {
-            element.textContent += text[i];
-            await new Promise((resolve) => setTimeout(resolve, 30));
-        }
-    }
-
-    function resetBubbles() {
-        gsap.set([clientBubble, aiBubble], { opacity: 0, y: 20 });
-        clientText.textContent = "";
-        aiText.textContent = "";
-    }
-
-    async function startChatLoop() {
-        while (true) {
-            const step = conversation[currentStep];
-
-            // Hide other bubble if switching sides or starting over
-            if (currentStep === 0) {
-                gsap.to([clientBubble, aiBubble], { opacity: 0, y: 20, duration: 0.5 });
-                await new Promise((r) => setTimeout(r, 600));
-                resetBubbles();
-            }
-
-            // Show current bubble
-            gsap.to(step.container, { opacity: 1, y: 0, duration: 0.5 });
-
-            // Type text
-            await typeEffect(step.element, step.text);
-
-            // Wait after typing
-            await new Promise((r) => setTimeout(r, 2000));
-
-            currentStep = (currentStep + 1) % conversation.length;
-
-            // If we finished a full cycle (Client + AI), wait a bit more before next
-            if (currentStep % 2 === 0) {
-                await new Promise((r) => setTimeout(r, 1000));
-            }
-        }
-    }
-
-    // Start the loop
-    startChatLoop();
-});
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    gsap.registerPlugin(MotionPathPlugin);
-
-    const circles = document.querySelectorAll('.icon-circle');
-    circles.forEach((circle, index) => {
-        const randomLeft = Math.random() * 85;
-        circle.style.left = `${randomLeft}%`;
-        circle.style.animationDelay = `${index * 1.5}s`;
-        circle.classList.add('fall-in');
-    });
-
-
-    /**
-     * @param {HTMLElement} wrapper  — the .flow-wrapper element
-     */
-    function initFlowInstance(wrapper) {
-        const pathsGroup = wrapper.querySelector('[id^="paths"]') || wrapper.querySelector('#paths');
-        const satellites = wrapper.querySelectorAll('.node.satellite');
-
-        if (!pathsGroup || satellites.length === 0) return;
-
-        if (!pathsGroup.id || pathsGroup.id === 'paths') {
-            pathsGroup.id = 'paths-' + Math.random().toString(36).slice(2, 8);
-        }
-
-        let activeTweens = [];
-
-        const nodeListeners = new WeakMap();
-
-        function buildLayout() {
-            activeTweens.forEach(t => t.kill());
-            activeTweens = [];
-            pathsGroup.innerHTML = '';
-
-            const rect = wrapper.getBoundingClientRect();
-            const wrapperW = rect.width;
-            const wrapperH = rect.height;
-
-            if (wrapperW === 0 || wrapperH === 0) return;
-
-            const scaleX = 1000 / wrapperW;
-            const scaleY = 600 / wrapperH;
-            const baseDist = Math.min(wrapperW, wrapperH);
-
-            satellites.forEach((node, i) => {
-                const gx = parseFloat(node.style.getPropertyValue('--gx'));
-                const gy = parseFloat(node.style.getPropertyValue('--gy'));
-                const distInput = parseFloat(node.style.getPropertyValue('--dist'));
-
-                const dist = baseDist * (distInput / 650);
-                const x = gx * dist;
-                const y = gy * dist;
-
-                node.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-
-                const x1 = 500 + x * scaleX;
-                const y1 = 300 + y * scaleY;
-                const x2 = 500;
-                const y2 = 300;
-
-                let pathData;
-                if (gx === 0 || gy === 0) {
-                    pathData = `M ${x1} ${y1} L ${x2} ${y2}`;
-                } else {
-                    const dx = x2 - x1;
-                    const dy = y2 - y1;
-                    const len = Math.sqrt(dx * dx + dy * dy);
-                    const nx = -dy / len;
-                    const ny = dx / len;
-                    const offset = len * 0.25;
-                    const waveDir = (gx * gy > 0) ? 1 : -1;
-                    const c1x = x1 + dx * 0.3 + nx * offset * waveDir;
-                    const c1y = y1 + dy * 0.3 + ny * offset * waveDir;
-                    const c2x = x1 + dx * 0.7 - nx * offset * waveDir;
-                    const c2y = y1 + dy * 0.7 - ny * offset * waveDir;
-                    pathData = `M ${x1} ${y1} C ${c1x} ${c1y} ${c2x} ${c2y} ${x2} ${y2}`;
-                }
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', pathData);
-                path.setAttribute('class', 'connection-path');
-                path.setAttribute('id', `path-${pathsGroup.id}-${i}`);
-                pathsGroup.appendChild(path);
-
-                // Create particle + trail
-                [{ r: 2.5, opacity: 1, offset: 0 }, { r: 1.5, opacity: 0.5, offset: 0.1 }]
-                    .forEach(cfg => {
-                        const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        el.setAttribute('r', cfg.r);
-                        el.setAttribute('class', 'light-particle');
-                        el.style.opacity = cfg.opacity;
-                        pathsGroup.appendChild(el);
-
-                        const duration = 2.5 + Math.random() * 2;
-                        const delay = Math.random() * 2 + cfg.offset;
-
-                        const tween = gsap.to(el, {
-                            duration,
-                            repeat: -1,
-                            ease: 'power1.inOut',
-                            delay,
-                            motionPath: {
-                                path,
-                                align: path,
-                                autoRotate: true,
-                                alignOrigin: [0.5, 0.5]
-                            }
-                        });
-                        activeTweens.push(tween);
-                    });
-
-                if (nodeListeners.has(node)) {
-                    const old = nodeListeners.get(node);
-                    node.removeEventListener('mouseenter', old.enter);
-                    node.removeEventListener('mouseleave', old.leave);
-                }
-
-                const onEnter = () => {
-                    gsap.to(path, { stroke: 'var(--cr-main)', strokeWidth: 3, opacity: 0.8, duration: 0.4 });
-                    gsap.to(node, { scale: 1.1, duration: 0.4 });
-                    node.style.borderColor = 'var(--cr-main)';
-                };
-                const onLeave = () => {
-                    gsap.to(path, { stroke: 'rgba(87, 75, 87, 0.1)', strokeWidth: 1.5, opacity: 1, duration: 0.4 });
-                    gsap.to(node, { scale: 1, duration: 0.4 });
-                    node.style.borderColor = 'rgba(91, 72, 91, 0.15)';
-                };
-
-                node.addEventListener('mouseenter', onEnter);
-                node.addEventListener('mouseleave', onLeave);
-                nodeListeners.set(node, { enter: onEnter, leave: onLeave });
-            });
-        }
-
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(buildLayout, 120);
-        });
-
-        setTimeout(buildLayout, 300);
-    }
-
-    document.querySelectorAll('.flow-wrapper').forEach(initFlowInstance);
-
-});
 
 
 

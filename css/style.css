@@ -2474,27 +2474,34 @@ html.scroll-up .nav-scroll {
   .navbar {
     position: static;
     padding: 15px 0;
-    background-color: var(--cr-dark);
-  }
-  .navbar .navbar-nav {
-    padding: 0;
-    background: transparent;
-    margin-top: 20px;
-  }
-  .navbar .navbar-nav .nav-item .nav-link {
-    padding: 0;
-    margin: 10px 0;
   }
   .hero {
     margin: 0;
     border-radius: 0;
-    background: var(--cr-dark);
+    padding-top: 50px;
+    overflow: hidden;
   }
   .hero h1 {
     font-size: 40px;
   }
   .hero .video {
     border-radius: 0;
+  }
+  .hero .imgs {
+    position: static;
+    width: 80%;
+  }
+  .portfolio .row .col-lg-4 {
+    margin: 15px 0 !important;
+  }
+  .portfolio .portfolio-card:hover .float-btns {
+    transform: translateY(-50px);
+  }
+  .mt-100 {
+    margin-top: 50px !important;
+  }
+  .float-icons {
+    bottom: 30px;
   }
   .features .features-box {
     background: linear-gradient(180deg, #1E293B 0%, #3E4A5C 100%);

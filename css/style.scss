@@ -3032,30 +3032,41 @@ html.scroll-up .nav-scroll {
     .navbar {
         position: static;
         padding: 15px 0;
-        background-color: var(--cr-dark);
-        .navbar-nav {
-            padding: 0;
-            background: transparent;
-            margin-top: 20px;
-            .nav-item {
-                .nav-link {
-                    padding: 0;
-                    margin: 10px 0;
-                }
-            }
-        }
     }
 
     .hero {
         margin: 0;
         border-radius: 0;
-        background: var(--cr-dark);
+        padding-top: 50px;
+        overflow: hidden;
+        // background: var(--cr-dark);
         h1 {
             font-size: 40px;
         }
         .video {
             border-radius: 0;
         }
+    }
+
+    .hero .imgs {
+        position: static;
+        width: 80%;
+    }
+
+    .portfolio .row .col-lg-4 {
+        margin: 15px 0 !important;
+    }
+
+    .portfolio .portfolio-card:hover .float-btns {
+        transform: translateY(-50px);
+    }
+
+    .mt-100 {
+        margin-top: 50px !important;
+    }
+
+    .float-icons {
+        bottom: 30px;
     }
 
     .features .features-box {
@@ -3197,6 +3208,8 @@ html.scroll-up .nav-scroll {
     .ai-section {
         overflow: hidden;
     }
+
+    
 
 }
 
